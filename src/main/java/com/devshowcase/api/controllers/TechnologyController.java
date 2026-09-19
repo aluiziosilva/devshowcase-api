@@ -1,6 +1,7 @@
 package com.devshowcase.api.controllers;
 
 import com.devshowcase.api.dtos.CreateTechnologyDTO;
+import com.devshowcase.api.dtos.TechnologyResponseDTO;
 import com.devshowcase.api.models.Technology;
 import com.devshowcase.api.repositories.TechnologyRepository;
 import jakarta.validation.Valid;
@@ -14,17 +15,26 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/technologies")
 public class TechnologyController {
-    @Autowired 
-    private TechnologyRepository techRepository;
+
+    @Autowired
+    private TechnologyRepository technologyRepository;
 
     @PostMapping
-    public ResponseEntity<Technology> create(@RequestBody @Valid CreateTechnologyDTO dto) {
-        Technology tech = new Technology(dto.name());
-        return ResponseEntity.status(HttpStatus.CREATED).body(techRepository.save(tech));
+    public ResponseEntity<TechnologyResponseDTO> create(@RequestBody @Valid CreateTechnologyDTO dto) {
+        Technology tech = new Technology();
+        tech.setName(dto.name());
+
+        Technology savedTech = technologyRepository.save(tech);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TechnologyResponseDTO(savedTech));
     }
 
     @GetMapping
-    public ResponseEntity<List<Technology>> findAll() {
-        return ResponseEntity.ok(techRepository.findAll());
+    public ResponseEntity<List<TechnologyResponseDTO>> findAll() {
+        List<TechnologyResponseDTO> responseList = technologyRepository.findAll()
+                .stream()
+                .map(TechnologyResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(responseList);
     }
 }

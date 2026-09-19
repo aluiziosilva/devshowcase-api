@@ -7,41 +7,60 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "tb_projects")
 public class Project {
-    @Id 
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String description;
     private String url;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
     @ManyToMany
     @JoinTable(
-        name = "project_technology",
+        name = "tb_project_technology",
         joinColumns = @JoinColumn(name = "project_id"),
         inverseJoinColumns = @JoinColumn(name = "technology_id")
     )
     private Set<Technology> technologies = new HashSet<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Feedback> feedbacks = new ArrayList<>();
 
     public Project() {}
 
+    public Project(Long id, String title, String description, String url, Profile profile) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.profile = profile;
+    }
+
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public String getUrl() { return url; }
     public void setUrl(String url) { this.url = url; }
+
     public Profile getProfile() { return profile; }
     public void setProfile(Profile profile) { this.profile = profile; }
+
     public Set<Technology> getTechnologies() { return technologies; }
     public void setTechnologies(Set<Technology> technologies) { this.technologies = technologies; }
+
     public List<Feedback> getFeedbacks() { return feedbacks; }
+    public void setFeedbacks(List<Feedback> feedbacks) { this.feedbacks = feedbacks; }
 }
