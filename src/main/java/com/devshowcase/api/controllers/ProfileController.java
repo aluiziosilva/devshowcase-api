@@ -26,7 +26,11 @@ public class ProfileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfileResponseDTO> findById(@PathVariable Long id) {
-        ProfileResponseDTO response = profileService.findById(id);
-        return ResponseEntity.ok(response);
+        try {
+            ProfileResponseDTO response = profileService.findById(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
